@@ -12,7 +12,6 @@ Windows Error Checker is a lightweight Windows Forms utility for scanning **Wind
 
 ## Requirements
 - Windows OS
-- Administrator privileges recommended (for full Event Log access)
 
 ## Usage
 1. Run the application
