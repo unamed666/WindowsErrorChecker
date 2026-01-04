@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WindowsErrorChecker")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A lightweight Windows utility that scans system event logs to identify and categorize CPU, RAM, disk, and GPU-related errors and warnings, providing a centralized view for quick diagnostics and troubleshooting.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("UNAMED666")]
 [assembly: AssemblyProduct("WindowsErrorChecker")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]

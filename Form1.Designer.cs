@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.Title = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.txtcpu = new System.Windows.Forms.TextBox();
@@ -44,11 +45,16 @@
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.linkLabel5 = new System.Windows.Forms.LinkLabel();
             this.linkLabel6 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+            this.panelProgressBack = new System.Windows.Forms.Panel();
+            this.labelprogress = new System.Windows.Forms.Label();
+            this.panelProgressFill = new System.Windows.Forms.Panel();
+            this.linkLabel7 = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.panelProgressBack.SuspendLayout();
             this.SuspendLayout();
             // 
             // Title
@@ -95,7 +101,7 @@
             this.txtcpu.Name = "txtcpu";
             this.txtcpu.ReadOnly = true;
             this.txtcpu.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtcpu.Size = new System.Drawing.Size(560, 205);
+            this.txtcpu.Size = new System.Drawing.Size(557, 205);
             this.txtcpu.TabIndex = 9;
             // 
             // txtgpu
@@ -112,7 +118,7 @@
             this.txtgpu.Name = "txtgpu";
             this.txtgpu.ReadOnly = true;
             this.txtgpu.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtgpu.Size = new System.Drawing.Size(560, 205);
+            this.txtgpu.Size = new System.Drawing.Size(557, 205);
             this.txtgpu.TabIndex = 10;
             // 
             // txtram
@@ -129,7 +135,7 @@
             this.txtram.Name = "txtram";
             this.txtram.ReadOnly = true;
             this.txtram.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtram.Size = new System.Drawing.Size(560, 205);
+            this.txtram.Size = new System.Drawing.Size(557, 205);
             this.txtram.TabIndex = 11;
             // 
             // txtdisk
@@ -146,7 +152,7 @@
             this.txtdisk.Name = "txtdisk";
             this.txtdisk.ReadOnly = true;
             this.txtdisk.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtdisk.Size = new System.Drawing.Size(560, 205);
+            this.txtdisk.Size = new System.Drawing.Size(557, 205);
             this.txtdisk.TabIndex = 12;
             // 
             // loading
@@ -155,11 +161,11 @@
             this.loading.AutoSize = true;
             this.loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.loading.ForeColor = System.Drawing.Color.White;
-            this.loading.Location = new System.Drawing.Point(451, 369);
+            this.loading.Location = new System.Drawing.Point(421, 347);
             this.loading.Name = "loading";
-            this.loading.Size = new System.Drawing.Size(107, 18);
+            this.loading.Size = new System.Drawing.Size(102, 18);
             this.loading.TabIndex = 9;
-            this.loading.Text = "Loading........";
+            this.loading.Text = "Loading.......";
             this.loading.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel1
@@ -258,7 +264,7 @@
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(0, 2);
             this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel1.LinkColor = System.Drawing.Color.Red;
-            this.linkLabel1.Location = new System.Drawing.Point(89, 0);
+            this.linkLabel1.Location = new System.Drawing.Point(80, 0);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(15, 13);
@@ -280,7 +286,7 @@
             this.linkLabel2.ForeColor = System.Drawing.Color.Gold;
             this.linkLabel2.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel2.LinkColor = System.Drawing.Color.Gainsboro;
-            this.linkLabel2.Location = new System.Drawing.Point(61, 0);
+            this.linkLabel2.Location = new System.Drawing.Point(52, 0);
             this.linkLabel2.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(16, 13);
@@ -302,7 +308,7 @@
             this.linkLabel3.ForeColor = System.Drawing.Color.Red;
             this.linkLabel3.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel3.LinkColor = System.Drawing.Color.Gainsboro;
-            this.linkLabel3.Location = new System.Drawing.Point(32, 0);
+            this.linkLabel3.Location = new System.Drawing.Point(23, 0);
             this.linkLabel3.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel3.Name = "linkLabel3";
             this.linkLabel3.Size = new System.Drawing.Size(17, 13);
@@ -322,32 +328,11 @@
             this.flowLayoutPanel1.Controls.Add(this.linkLabel2);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel4);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel3);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(445, 9);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(454, 9);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(116, 31);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(107, 19);
             this.flowLayoutPanel1.TabIndex = 17;
-            // 
-            // linkLabel4
-            // 
-            this.linkLabel4.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
-            this.linkLabel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabel4.AutoSize = true;
-            this.linkLabel4.BackColor = System.Drawing.Color.Transparent;
-            this.linkLabel4.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.linkLabel4.Font = new System.Drawing.Font("Segoe MDL2 Assets", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel4.ForeColor = System.Drawing.Color.Red;
-            this.linkLabel4.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
-            this.linkLabel4.LinkColor = System.Drawing.Color.Gainsboro;
-            this.linkLabel4.Location = new System.Drawing.Point(49, 0);
-            this.linkLabel4.Margin = new System.Windows.Forms.Padding(0);
-            this.linkLabel4.Name = "linkLabel4";
-            this.linkLabel4.Size = new System.Drawing.Size(12, 13);
-            this.linkLabel4.TabIndex = 17;
-            this.linkLabel4.TabStop = true;
-            this.linkLabel4.Text = " ";
-            this.linkLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.linkLabel4.VisitedLinkColor = System.Drawing.Color.Red;
             // 
             // linkLabel5
             // 
@@ -359,7 +344,7 @@
             this.linkLabel5.ForeColor = System.Drawing.Color.Red;
             this.linkLabel5.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel5.LinkColor = System.Drawing.Color.Gainsboro;
-            this.linkLabel5.Location = new System.Drawing.Point(104, 0);
+            this.linkLabel5.Location = new System.Drawing.Point(95, 0);
             this.linkLabel5.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel5.Name = "linkLabel5";
             this.linkLabel5.Size = new System.Drawing.Size(12, 13);
@@ -380,7 +365,7 @@
             this.linkLabel6.ForeColor = System.Drawing.Color.Red;
             this.linkLabel6.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel6.LinkColor = System.Drawing.Color.Gainsboro;
-            this.linkLabel6.Location = new System.Drawing.Point(77, 0);
+            this.linkLabel6.Location = new System.Drawing.Point(68, 0);
             this.linkLabel6.Margin = new System.Windows.Forms.Padding(0);
             this.linkLabel6.Name = "linkLabel6";
             this.linkLabel6.Size = new System.Drawing.Size(12, 13);
@@ -390,12 +375,84 @@
             this.linkLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.linkLabel6.VisitedLinkColor = System.Drawing.Color.Red;
             // 
+            // linkLabel4
+            // 
+            this.linkLabel4.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            this.linkLabel4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabel4.AutoSize = true;
+            this.linkLabel4.BackColor = System.Drawing.Color.Transparent;
+            this.linkLabel4.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.linkLabel4.Font = new System.Drawing.Font("Segoe MDL2 Assets", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel4.ForeColor = System.Drawing.Color.Red;
+            this.linkLabel4.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.linkLabel4.LinkColor = System.Drawing.Color.Gainsboro;
+            this.linkLabel4.Location = new System.Drawing.Point(40, 0);
+            this.linkLabel4.Margin = new System.Windows.Forms.Padding(0);
+            this.linkLabel4.Name = "linkLabel4";
+            this.linkLabel4.Size = new System.Drawing.Size(12, 13);
+            this.linkLabel4.TabIndex = 17;
+            this.linkLabel4.TabStop = true;
+            this.linkLabel4.Text = " ";
+            this.linkLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.linkLabel4.VisitedLinkColor = System.Drawing.Color.Red;
+            // 
+            // panelProgressBack
+            // 
+            this.panelProgressBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelProgressBack.BackColor = System.Drawing.Color.DimGray;
+            this.panelProgressBack.Controls.Add(this.panelProgressFill);
+            this.panelProgressBack.Location = new System.Drawing.Point(424, 368);
+            this.panelProgressBack.Name = "panelProgressBack";
+            this.panelProgressBack.Size = new System.Drawing.Size(124, 10);
+            this.panelProgressBack.TabIndex = 19;
+            // 
+            // labelprogress
+            // 
+            this.labelprogress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelprogress.BackColor = System.Drawing.Color.Transparent;
+            this.labelprogress.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelprogress.ForeColor = System.Drawing.Color.White;
+            this.labelprogress.Location = new System.Drawing.Point(516, 348);
+            this.labelprogress.Name = "labelprogress";
+            this.labelprogress.Size = new System.Drawing.Size(37, 19);
+            this.labelprogress.TabIndex = 0;
+            this.labelprogress.Text = "100%";
+            this.labelprogress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panelProgressFill
+            // 
+            this.panelProgressFill.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            this.panelProgressFill.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelProgressFill.Location = new System.Drawing.Point(0, 0);
+            this.panelProgressFill.Name = "panelProgressFill";
+            this.panelProgressFill.Size = new System.Drawing.Size(125, 10);
+            this.panelProgressFill.TabIndex = 20;
+            // 
+            // linkLabel7
+            // 
+            this.linkLabel7.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            this.linkLabel7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel7.AutoSize = true;
+            this.linkLabel7.Font = new System.Drawing.Font("Sitka Text", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel7.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.linkLabel7.LinkColor = System.Drawing.Color.White;
+            this.linkLabel7.Location = new System.Drawing.Point(12, 360);
+            this.linkLabel7.Name = "linkLabel7";
+            this.linkLabel7.Size = new System.Drawing.Size(104, 18);
+            this.linkLabel7.TabIndex = 20;
+            this.linkLabel7.TabStop = true;
+            this.linkLabel7.Text = "By: UNAMED666";
+            this.linkLabel7.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel7_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(39)))));
             this.ClientSize = new System.Drawing.Size(561, 408);
+            this.Controls.Add(this.labelprogress);
+            this.Controls.Add(this.linkLabel7);
+            this.Controls.Add(this.panelProgressBack);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.txtcpu);
@@ -406,6 +463,7 @@
             this.Controls.Add(this.txtgpu);
             this.Controls.Add(this.Title);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "Form1";
             this.ShowIcon = false;
@@ -413,6 +471,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.panelProgressBack.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -439,6 +498,10 @@
         private System.Windows.Forms.LinkLabel linkLabel4;
         private System.Windows.Forms.LinkLabel linkLabel5;
         private System.Windows.Forms.LinkLabel linkLabel6;
+        private System.Windows.Forms.Panel panelProgressBack;
+        private System.Windows.Forms.Panel panelProgressFill;
+        private System.Windows.Forms.LinkLabel linkLabel7;
+        private System.Windows.Forms.Label labelprogress;
     }
 }
 

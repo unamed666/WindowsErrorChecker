@@ -51,13 +51,11 @@ namespace WindowsErrorChecker
         public Form1()
         {
             InitializeComponent();
-            EnableDrag(this);       
-            EnableDrag(Title);    
-            EnableDrag(txtcpu);
-            EnableDrag(txtgpu);
-            EnableDrag(txtram);
-            EnableDrag(txtdisk);
-            linkLabel1.Text = "\uE8BB";// Close
+
+            EnableDrag(this);
+            EnableDrag(Title);
+
+            linkLabel1.Text = "\uE8BB"; // Close
             linkLabel2.Text = "\uE921"; // Minimize
             if (this.WindowState == FormWindowState.Normal)
             {
@@ -68,13 +66,11 @@ namespace WindowsErrorChecker
                 linkLabel2.Text = "\uE923"; // Restore
             }
 
-
             InitLoading();
 
             this.FormClosing += Form1_FormClosing;
-
-
         }
+
         // ===========================resize form==========================
         protected override void WndProc(ref Message m)
         {
@@ -90,7 +86,7 @@ namespace WindowsErrorChecker
             const int HTBOTTOMLEFT = 16;
             const int HTBOTTOMRIGHT = 17;
 
-            const int RESIZE_HANDLE_SIZE = 8; // lebar area resize
+            const int RESIZE_HANDLE_SIZE = 8; // width of resize area
 
             if (m.Msg == WM_NCHITTEST)
             {
@@ -120,19 +116,19 @@ namespace WindowsErrorChecker
             base.WndProc(ref m);
         }
 
-
-
         // ===========================
         // LOADING TEXT
         // ===========================
         private void InitLoading()
         {
             loading.Visible = false;
+            labelprogress.Visible = false;
+            panelProgressBack.Visible = false;
             loadingTimer = new System.Windows.Forms.Timer();
             loadingTimer.Interval = 400;
             loadingTimer.Tick += delegate
             {
-                loadingDots = loadingDots >= 4 ? 1 : loadingDots + 1;
+                loadingDots = loadingDots >= 7 ? 1 : loadingDots + 1;
                 loading.Text = "Loading" + new string('.', loadingDots);
             };
         }
@@ -142,6 +138,8 @@ namespace WindowsErrorChecker
             loadingDots = 1;
             loading.Text = "Loading.";
             loading.Visible = true;
+            labelprogress.Visible = true;
+            panelProgressBack.Visible = true;
             loadingTimer.Start();
         }
 
@@ -149,7 +147,21 @@ namespace WindowsErrorChecker
         {
             loadingTimer.Stop();
             loading.Visible = false;
+            labelprogress.Visible = false;
+            panelProgressBack.Visible = false;
         }
+
+        private void SetProgress(int percent)
+        {
+            // Ensure percent is 0-100
+            percent = Math.Max(0, Math.Min(100, percent));
+
+            panelProgressFill.Width = panelProgressBack.Width * percent / 100;
+
+            // Update text
+            labelprogress.Text = percent + "%";
+        }
+
 
         // ===========================
         // BUTTON CLICK
@@ -170,18 +182,22 @@ namespace WindowsErrorChecker
             isScanning = true;
             StartLoading();
             SetScanButtonState(button1, true);
+            SetProgress(0);
+
+            var progress = new Progress<int>(value =>
+            {
+                SetProgress(value);
+
+            });
 
             try
             {
-                var result = await Task.Run(
-                    () => ScanErrors(scanCts.Token),
-                    scanCts.Token
-                );
+                var result = await Task.Run(() => ScanErrors(scanCts.Token, progress), scanCts.Token);
 
-                txtcpu.Text = result.cpu.Length > 0 ? result.cpu : "No CPU errors detected.";
-                txtram.Text = result.ram.Length > 0 ? result.ram : "No RAM errors detected.";
-                txtdisk.Text = result.disk.Length > 0 ? result.disk : "No Disk errors detected.";
-                txtgpu.Text = result.gpu.Length > 0 ? result.gpu : "No GPU errors detected.";
+                txtcpu.Text = !string.IsNullOrEmpty(result.cpu) ? result.cpu : "No CPU errors detected.";
+                txtram.Text = !string.IsNullOrEmpty(result.ram) ? result.ram : "No RAM errors detected.";
+                txtdisk.Text = !string.IsNullOrEmpty(result.disk) ? result.disk : "No Disk errors detected.";
+                txtgpu.Text = !string.IsNullOrEmpty(result.gpu) ? result.gpu : "No GPU errors detected.";
             }
             catch (OperationCanceledException)
             {
@@ -194,6 +210,7 @@ namespace WindowsErrorChecker
             {
                 StopLoading();
                 SetScanButtonState(button1, false);
+                SetProgress(100);
                 isScanning = false;
 
                 if (scanCts != null)
@@ -227,6 +244,7 @@ namespace WindowsErrorChecker
             if (scanCts != null)
                 scanCts.Cancel();
         }
+
         // ===========================Mouse DOWN DISABLE BUTTON ==========================
         private void SetScanButtonState(Button btn, bool scanning)
         {
@@ -242,57 +260,63 @@ namespace WindowsErrorChecker
                 ? Cursors.No
                 : Cursors.Hand;
         }
+
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
             if (isScanning)
                 ((Control)sender).Capture = false;
         }
 
-
         // ===========================
         // SCAN EVENT LOG
         // ===========================
-        private (string cpu, string ram, string disk, string gpu)
-            ScanErrors(CancellationToken token)
+        private (string cpu, string ram, string disk, string gpu) ScanErrors(CancellationToken token, IProgress<int> progress)
         {
             StringBuilder cpu = new StringBuilder();
             StringBuilder ram = new StringBuilder();
             StringBuilder disk = new StringBuilder();
             StringBuilder gpu = new StringBuilder();
 
-            EventLog log = new EventLog("System");
-
-            foreach (EventLogEntry e in log.Entries)
+            try
             {
-                token.ThrowIfCancellationRequested();
+                EventLog log = new EventLog("System");
+                int total = log.Entries.Count;
+                int processed = 0;
 
-                if (e.EntryType != EventLogEntryType.Error &&
-                    e.EntryType != EventLogEntryType.Warning)
-                    continue;
+                foreach (EventLogEntry e in log.Entries)
+                {
+                    token.ThrowIfCancellationRequested();
 
-                string src = e.Source.ToLower();
-                string msg = e.Message.ToLower();
+                    string src = e.Source.ToLower();
+                    string msg = e.Message.ToLower();
 
-                if (e.Source == "BugCheck")
-                {
-                    cpu.AppendLine(FormatBugCheck(e));
+                    if (e.EntryType == EventLogEntryType.Error || e.EntryType == EventLogEntryType.Warning)
+                    {
+                        if (e.Source == "BugCheck")
+                            cpu.AppendLine(FormatBugCheck(e));
+                        else if (src.Contains("whea"))
+                            cpu.AppendLine(Format(e));
+                        else if (src.Contains("memory") || msg.Contains("page fault"))
+                            ram.AppendLine(Format(e));
+                        else if (src.Contains("disk") || src.Contains("stor") || msg.Contains("bad block"))
+                        {
+                            string diskLog = FormatDisk(e);
+                            if (!string.IsNullOrEmpty(diskLog))
+                                disk.AppendLine(diskLog);
+                        }
+                        else if (src.Contains("nvlddmkm") || src.Contains("amdkmdag") || msg.Contains("tdr"))
+                            gpu.AppendLine(FormatGpu(e));
+                    }
+
+                    processed++;
+                    // Update progress in percent
+                    progress?.Report((int)((processed / (float)total) * 100));
                 }
-                else if (src.Contains("whea"))
-                {
-                    cpu.AppendLine(Format(e));
-                }
-                else if (src.Contains("memory") || msg.Contains("page fault"))
-                {
-                    ram.AppendLine(Format(e));
-                }
-                else if (src.Contains("disk") || src.Contains("stor") || msg.Contains("bad block"))
-                {
-                    disk.AppendLine(FormatDisk(e));
-                }
-                else if (src.Contains("nvlddmkm") || src.Contains("amdkmdag") || msg.Contains("tdr"))
-                {
-                    gpu.AppendLine(FormatGpu(e));
-                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Some system logs require administrator privileges to read.", "Access Denied",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             return (cpu.ToString(), ram.ToString(), disk.ToString(), gpu.ToString());
@@ -336,9 +360,34 @@ namespace WindowsErrorChecker
         private string FormatGpu(EventLogEntry e)
         {
             StringBuilder sb = new StringBuilder();
+
+            // Get all GPUs
+            List<string> gpuNames = new List<string>();
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
+                foreach (ManagementObject gpu in searcher.Get())
+                {
+                    gpuNames.Add(gpu["Name"].ToString());
+                }
+            }
+            catch { }
+
+            string matchedGpu = "Unknown GPU";
+
+            foreach (string name in gpuNames)
+            {
+                if (e.Source.ToLower().Contains(name.ToLower()) || e.Message.ToLower().Contains(name.ToLower()))
+                {
+                    matchedGpu = name;
+                    break;
+                }
+            }
+
             sb.AppendLine("[" + e.TimeGenerated + "]");
-            sb.AppendLine("Source : " + e.Source);
-            sb.AppendLine("Event  : " + e.InstanceId);
+            sb.AppendLine("GPU Device : " + matchedGpu);
+            sb.AppendLine("Source     : " + e.Source);
+            sb.AppendLine("Event      : " + e.InstanceId);
             sb.AppendLine(e.Message);
             sb.AppendLine(new string('-', 60));
             return sb.ToString();
@@ -349,11 +398,17 @@ namespace WindowsErrorChecker
         // ===========================
         private string FormatDisk(EventLogEntry e)
         {
+            string diskInfo = GetDiskInfo(e.Message);
+
+            // Ignore log if diskInfo is null → brand unknown / disk likely not attached
+            if (diskInfo == null)
+                return null;
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("[" + e.TimeGenerated + "]");
             sb.AppendLine("Source : " + e.Source);
             sb.AppendLine("Event  : " + e.InstanceId);
-            sb.AppendLine(GetDiskInfo(e.Message));
+            sb.AppendLine(diskInfo);
             sb.AppendLine(e.Message);
             sb.AppendLine(new string('-', 60));
             return sb.ToString();
@@ -363,25 +418,67 @@ namespace WindowsErrorChecker
         {
             Match m = Regex.Match(msg, @"harddisk(\d+)", RegexOptions.IgnoreCase);
             if (!m.Success)
-                return "Disk : UNKNOWN";
+                return null; // do not process if index not found
 
             int index = int.Parse(m.Groups[1].Value);
 
             try
             {
-                ManagementObjectSearcher s =
+                // Get physical disk from WMI
+                ManagementObjectSearcher diskSearcher =
                     new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive WHERE Index=" + index);
 
-                foreach (ManagementObject d in s.Get())
+                foreach (ManagementObject disk in diskSearcher.Get())
                 {
-                    return
-                        "Disk Index : " + index + "\r\n" +
-                        "Model      : " + d["Model"];
+                    string status = disk["Status"]?.ToString() ?? "UNKNOWN";
+                    string model = disk["Model"]?.ToString() ?? "Unknown Model";
+
+                    // Ignore disks with Unknown or Pred Fail status
+                    if (status.Equals("Unknown", StringComparison.OrdinalIgnoreCase) ||
+                        status.Equals("Pred Fail", StringComparison.OrdinalIgnoreCase))
+                        return null; // disk will not be displayed
+
+                    // Get drive letters if any
+                    string driveLetters = GetDriveLetters(disk);
+
+                    return $"Disk Index : {index}\r\nModel      : {model}\r\nStatus     : {status}\r\nDrive      : {driveLetters}";
+                }
+            }
+            catch
+            {
+                // If WMI fails → assume disk not attached
+                return null;
+            }
+
+            // If disk not found in WMI → likely not attached
+            return null;
+        }
+
+        // Helper to get drive letters from physical disk
+        private string GetDriveLetters(ManagementObject disk)
+        {
+            List<string> letters = new List<string>();
+
+            try
+            {
+                // Connect DiskDrive → Partition → LogicalDisk
+                ManagementObjectSearcher partitionSearcher = new ManagementObjectSearcher(
+                    $"ASSOCIATORS OF {{Win32_DiskDrive.DeviceID='{disk["DeviceID"]}'}} WHERE AssocClass = Win32_DiskDriveToDiskPartition");
+
+                foreach (ManagementObject partition in partitionSearcher.Get())
+                {
+                    ManagementObjectSearcher logicalSearcher = new ManagementObjectSearcher(
+                        $"ASSOCIATORS OF {{Win32_DiskPartition.DeviceID='{partition["DeviceID"]}'}} WHERE AssocClass = Win32_LogicalDiskToPartition");
+
+                    foreach (ManagementObject logical in logicalSearcher.Get())
+                    {
+                        letters.Add(logical["DeviceID"].ToString()); // e.g.: C:, D:
+                    }
                 }
             }
             catch { }
 
-            return "Disk Index : " + index;
+            return letters.Count > 0 ? string.Join(", ", letters) : "Unknown";
         }
 
         private void CPU_Click(object sender, EventArgs e)
@@ -459,13 +556,33 @@ namespace WindowsErrorChecker
                 MessageBoxIcon.Warning);
 
             if (r == DialogResult.No)
-            {                
+            {
                 return;
             }
 
             if (scanCts != null)
                 scanCts.Cancel();
-                this.Close();
+            this.Close();
         }
+
+        private void linkLabel7_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string url = "https://github.com/unamed666/WindowsErrorChecker";
+
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true // Open in default browser
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open link: " + ex.Message);
+            }
+        }
+
+
     }
 }
