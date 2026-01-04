@@ -104,7 +104,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ChatGPT Image Jan 4, 2026, 05_42_40 PM.ico" />
     <Content Include="windowserrorchecker.ico" />
   </ItemGroup>
   <ItemGroup>
