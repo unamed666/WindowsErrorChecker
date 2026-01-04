@@ -1,7 +1,12 @@
-# Windows Error Checker
+<h1 align="center">
+Windows Error Checker
+</h2><br>
+<p align="center">
+<img width="200" height="200" alt="windowserrorchecker" src="https://github.com/user-attachments/assets/888604b2-8d97-4a9b-ad55-e9b9404e29a9" />
+</p>
 
 Windows Error Checker is a lightweight Windows Forms utility for scanning **Windows Event Logs** to detect and categorize system errors related to **CPU, RAM, Disk, and GPU**.
-
+<br><br><br><br>
 <h2 align="center">
   <a href="https://github.com/unamed666/WindowsErrorChecker/releases/latest">DOWNLOAD HERE</a>
 </h2>
